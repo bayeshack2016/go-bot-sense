@@ -70,7 +70,7 @@ def load_config( ):
 def get( name ):
 	global _senses
 	if (_senses is None):
-		load()
+		init()
 	return _senses[name]
 	
 class SenseConfig:
@@ -80,6 +80,9 @@ class SenseConfig:
 		self.impl_name = None
 		self.impl_config = []
 	
+	def __str__(self):
+		return self.to_string()
+
 	def to_string(self):
 		return json.dumps( { 'name': self.name, 'interval': interval, 'impl_name': self.impl_name, 'impl_config': self.impl_config } )
 

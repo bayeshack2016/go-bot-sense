@@ -1,0 +1,8 @@
+{
+	"id": "TESTNODE1",
+	"name": "Test Node 1",
+	"group": "TESTGROUP",
+	"lat": 30.27289,
+	"long": -97.74089,
+	"elevation": 489.5
+}

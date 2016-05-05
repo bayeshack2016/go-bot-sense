@@ -2,13 +2,14 @@ import sqlite3
 import time
 import threading
 
+DB_FILENAME = "sense_data.sqlite"
 SENSE_DATA_CREATE = "create table if not exists SenseData (TimeStamp INTEGER, SensorName TEXT, SensorVal REAL)"
 SENSE_DATA_INSERT = "insert into SenseData values (?, ?, ?)"
 
 def init_database():
 	try:
 		_lock.acquire()
-		db = sqlite3.connect('sense_data.sqlite')
+		db = sqlite3.connect(DB_FILENAME)
 		cursor = db.cursor()
 		cursor.execute(SENSE_DATA_CREATE)
 		db.commit()
@@ -22,7 +23,7 @@ def insert_sense_data(sense_name, sense_val):
 	timestamp = int(time.time())
 	try:
 		_lock.acquire()
-		db = sqlite3.connect('sense_data.sqlite')
+		db = sqlite3.connect(DB_FILENAME)
 		cursor = db.cursor()
 		cursor.execute(SENSE_DATA_INSERT, (timestamp, sense_name, sense_val))
 		db.commit()
