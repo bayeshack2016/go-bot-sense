@@ -74,17 +74,37 @@ def get( name ):
 	return _senses[name]
 	
 class SenseConfig:
-	def __init__(self):
-		self.name = None
-		self.interval = None
-		self.impl_name = None
-		self.impl_config = []
+	def __init__(self, name=None, interval=60, impl_name=None, impl_config=[]):
+		self.name = name
+		self.interval = interval
+		self.impl_name = impl_name
+		self.impl_config = impl_config
 	
 	def __str__(self):
 		return self.to_string()
 
 	def to_string(self):
-		return json.dumps( { 'name': self.name, 'interval': interval, 'impl_name': self.impl_name, 'impl_config': self.impl_config } )
+		return json.dumps( vars(self), default=lambda o: o.__dict__ )
+
+class SenseDatum:
+	def __init__(self, source=None, timestamp=None, sense_name=None, sense_val=None):
+		self.source = source
+		self.timestamp = timestamp
+		self.sense_name = sense_name
+		self.sense_val = sense_val
+		
+	def __str__(self):
+		return self.to_string()
+
+	def to_string(self):
+		return self.to_json()
+	
+	def to_json(self):
+		return json.dumps( vars(self), default=lambda o: o.__dict__ )
+	
+	@staticmethod
+	def from_dict( dict ):
+		return SenseDatum(source=dict['source'], timestamp=dict['timestamp'], sense_name=dict['sense_name'], sense_val=dict['sense_val'])
 
 class Sense(metaclass=ABCMeta):
 	@abstractmethod

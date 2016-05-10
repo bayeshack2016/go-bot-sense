@@ -50,4 +50,6 @@ def update_from_vals(old_id, new_id, description, content_type, data, publish_da
 
 def delete(content_id):
 	content_data.delete_content(content_id)
+	
+
 
