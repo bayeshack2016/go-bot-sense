@@ -17,6 +17,7 @@ CONTENT_METADATA_DELETE = "delete from ContentMetadata where Id=?"
 CONTENT_DATA_DELETE = "delete from ContentData where Id=?"
 
 def init_database():
+	print('Initializing content database')
 	try:
 		_lock.acquire()
 		db = sqlite3.connect(DB_FILENAME)
@@ -26,6 +27,7 @@ def init_database():
 		db.commit()
 	except Exception as e:
 		db.rollback()
+		raise(e)
 	finally:
 		db.close()
 		_lock.release()

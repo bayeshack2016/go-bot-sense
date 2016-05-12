@@ -63,10 +63,11 @@ class ContentCommand:
 	UPDATE = "update"
 	DELETE = "delete"
 	
-	def __init__(self, command=None, content=None, authority=None):
+	def __init__(self, command=None, content=None, authority=None, timestamp=None):
 		self.command = command
 		self.content = content
 		self.authority = authority
+		self.timestamp = timestamp
 	
 	def __str__(self):
 		return self.to_string()
@@ -79,7 +80,7 @@ class ContentCommand:
 
 	@staticmethod
 	def from_dict( dict ):
-		return ContentCommand(command=dict["command"], authority=dict["authority"], content = Content.from_dict(dict["content"]))
+		return ContentCommand(command=dict["command"], authority=dict["authority"], timestamp=dict["timestamp"], content = Content.from_dict(dict["content"]))
 	
 	
 	

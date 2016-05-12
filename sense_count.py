@@ -11,6 +11,7 @@ class CountSense(sense.Sense):
 		self.data_filename = data_filename
 		self.current_count = 0
 		self.monitor_thread = None
+		self.stopping = False
 	
 	def get_value(self):
 		return self.current_count
@@ -43,16 +44,21 @@ class CountSense(sense.Sense):
 	def write_data_file(self):
 		with open(self.data_filename, "w") as data_file:
 			data_file.write(str(self.current_count))
+			
+	def stop(self):
+		self.stopping = True
 		
 class CountMonitorThread(threading.Thread):
-	def __init__(self, sense):
+	def __init__(self, sen):
 		threading.Thread.__init__(self)
-		self.sense = sense
+		self.sense = sen
+		print(str(sen))
 	
 	def run(self):
 		while 1:
-			gpio.wait_for_edge(21, gpio.RISING)
+			gpio.wait_for_edge(self.sense.pin_number, gpio.RISING)
 			self.sense.current_count += 1
 			self.sense.write_data_file()
-		
+			if self.sense.stopping:
+				return
 		

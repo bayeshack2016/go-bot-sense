@@ -1,7 +1,7 @@
 import sqlite3
 import time
 import threading
-import node
+import config
 
 DB_FILENAME = "sense_data.sqlite"
 SENSE_DATA_CREATE = "create table if not exists SenseData (Source TEXT, TimeStamp INTEGER, SenseName TEXT, SenseVal REAL)"
@@ -16,11 +16,12 @@ def init_database():
 		db.commit()
 	except Exception as e:
 		db.rollback()
+		raise(e)
 	finally:
 		db.close()
 		_lock.release()
 		
-def insert_sense_data(sense_name, sense_val, source=node.id, timestamp=int(time.time())):
+def insert_sense_data(sense_name, sense_val, source=config.node.id, timestamp=int(time.time())):
 	try:
 		_lock.acquire()
 		db = sqlite3.connect(DB_FILENAME)
@@ -34,7 +35,7 @@ def insert_sense_data(sense_name, sense_val, source=node.id, timestamp=int(time.
 		_lock.release()
 
 def get_node_id():
-	return node.id;
+	return config.node.id;
 
 _lock = threading.RLock()
 init_database()

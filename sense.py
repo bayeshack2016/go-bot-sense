@@ -7,11 +7,11 @@ import threading
 import time
 import schedule
 import sense_data
+import config
 
 # Requires a json configuration file called "sense.json" to define the available senses and related configuration
 
 _senses = None
-_sense_configs = {}
 
 def main():
 	init()
@@ -21,13 +21,16 @@ def main():
 		time.sleep(1)
 
 def init():
-	load_config()
-	for config in _sense_configs.values():
-		sense_class = class_from_string(config.impl_name)
+	global _senses
+	_senses = {}
+	for conf in config.senses.values():
+		sense_class = class_from_string(conf.impl_name)
+		print("Sense config class -> "+str(sense_class))
 		sense = sense_class()
-		sense.init(config.impl_config)
-		_senses[config.name] = sense
-		schedule_sense(config.name, sense, config.interval)
+		sense.init(conf.impl_config)
+		_senses[conf.name] = sense
+		print("Added sense: "+conf.name)
+		schedule_sense(conf.name, sense, conf.interval)
 
 def collect_data(sense_name, sense):
 	val = sense.get_value()
@@ -52,40 +55,18 @@ def class_from_string(name):
 		mod = getattr(mod, comp)
 	return mod
 
-def load_config( ):
-	global _senses, _sense_configs
-	with open('sense.json') as data_file:
-		jsondata = json.load(data_file)
-	_senses = {}
-	for sense_config in jsondata:
-		config = SenseConfig()
-		
-		config.name = sense_config["name"]
-		config.interval = sense_config["interval"]
-		config.impl_name = sense_config["impl_name"]
-		config.impl_config = sense_config["impl_config"]
-		_sense_configs[config.name] = config
-	return
-	
 def get( name ):
 	global _senses
-	if (_senses is None):
-		init()
+	#if (_senses is None):
+	#	init()
 	return _senses[name]
-	
-class SenseConfig:
-	def __init__(self, name=None, interval=60, impl_name=None, impl_config=[]):
-		self.name = name
-		self.interval = interval
-		self.impl_name = impl_name
-		self.impl_config = impl_config
-	
-	def __str__(self):
-		return self.to_string()
 
-	def to_string(self):
-		return json.dumps( vars(self), default=lambda o: o.__dict__ )
-
+def stop():
+	global _senses
+	for key, val in _senses.items():
+		val.stop()
+	_senses = None
+	
 class SenseDatum:
 	def __init__(self, source=None, timestamp=None, sense_name=None, sense_val=None):
 		self.source = source
@@ -114,6 +95,10 @@ class Sense(metaclass=ABCMeta):
 	@abstractmethod
 	def init(self,config):
 		pass
+		
+	@abstractmethod
+	def stop(self):
+		pass
 	
 class FakeSense(Sense):
 	def get_value(self):
@@ -123,7 +108,10 @@ class FakeSense(Sense):
 		print("FakeSense Config:")
 		for x in config:
 			print(x)
-
+	
+	def stop(self):
+		print("FakeSense stop called")
+		
 if __name__ == "__main__":
 	main()
 

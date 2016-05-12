@@ -55,4 +55,6 @@ class TemperatureSense(sense.Sense):
 		self.curve = ConversionCurve(filename=self.curve_filename)
 		self.adc = Adafruit_ADS1x15.ADS1115(address=self.i2c_address)
 		
+	def stop(self):
+		pass
 		

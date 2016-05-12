@@ -5,13 +5,17 @@ import sync
 import content
 import content_manager
 import node
+import config
 
-node.init()
-node_id = node.id
+node_id = config.node.id
 print('Node Id: {0}', node_id)
 
+sense.init()
 temp = sense.get("temperature").get_value()
-print('Temperature Sensor Value: {0}'.format((temp,)))
+print('Temperature Sensor Value: '+str(temp))
+count = sense.get("count").get_value()
+print('Count Sensor Value: '+str(count))
+sense.stop()
 
 print('Inserting content')
 content_data = "A quick brown fox jumped over the lazy dog"
