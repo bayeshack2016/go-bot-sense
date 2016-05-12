@@ -1,4 +1,0 @@
-[
-	{ "name": "temperature", "interval": 6, "impl_name" : "sense.FakeSense", "impl_config": [1, "test"] },
-	{ "name": "count", "interval": 30, "impl_name" : "sense.FakeSense", "impl_config": [2, "test2"] }
-]
