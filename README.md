@@ -62,4 +62,4 @@ The current prototype is being built with a Raspberry Pi 3 but is intended to ru
 
 The figure below shows the hardware wiring schematic for the prototype GO Bot Sense device.
 
-![GO Bot Sense Hardware Schematic]("go-bot-sense-hardware.png")
+![GO Bot Sense Hardware Schematic](go-bot-sense-hardware.png)
