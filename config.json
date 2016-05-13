@@ -11,7 +11,7 @@
 	"senses":
 	[
 		{ "name": "temperature", "interval": 6, "impl_name" : "sense_temperature.TemperatureSense", "impl_config": [ 72, "temperature_curve.json" ] },
-		{ "name": "count", "interval": 10, "impl_name" : "sense_count.CountSense", "impl_config": [21, "count1.dat"] }
+		{ "name": "count", "interval": 10, "impl_name" : "sense_count.CountSense", "impl_config": [16, "count1.dat"] }
 	],
 	"sync":
 	{

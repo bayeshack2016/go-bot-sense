@@ -4,6 +4,12 @@ import content
 import threading
 import config
 
+def main():
+	init()
+
+def init():
+	pass
+	
 class SyncPackage:
 	
 	def __init__(self, id = None, source = None, start_time = None, end_time = None, sense_data = [], content_data = [] ):
@@ -55,3 +61,7 @@ class SyncPackage:
 			jsonstr = text_file.read()
 			#print(jsonstr)
 		return SyncPackage.from_json(jsonstr)
+
+if __name__ == "__main__":
+	main()
+
