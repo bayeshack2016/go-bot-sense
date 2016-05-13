@@ -3,14 +3,14 @@ GO Bot Sense acts as the ears and eyes of the go-bot ecosystem, collecting senso
 
 Underlying our GO Bot Sense efforts are the following principles:
 
-    * GO Bot Sense will be modular and expandable and something that can be customized for the specialized needs of different parks.
-    * GO Bot Sense will be solar powered and easily deployed anywhere within the park.
-    * GO Bot Sense will support a number of networking options, including
-		* Shared wi-fi network
-		* Ad hoc wi-fi mesh-network
-		* Connected by a virtual "sneaker net" where information is relayed between GO Bot Sense nodes through interaction with rangers and visitors moving between beacons via Bluetooth LE
-	* Total hardware costs should be kept under $100
-	* Both the hardware and software should be open source licensed
+* GO Bot Sense will be modular and expandable and something that can be customized for the specialized needs of different parks.
+* GO Bot Sense will be solar powered and easily deployed anywhere within the park.
+* GO Bot Sense will support a number of networking options, including
+	* Shared wi-fi network
+	* Ad hoc wi-fi mesh-network
+	* Connected by a virtual "sneaker net" where information is relayed between GO Bot Sense nodes through interaction with rangers and visitors moving between beacons via Bluetooth LE
+* Total hardware costs should be kept under $100
+* Both the hardware and software should be open source licensed
 		
 This project is both a software and hardware solution.  The target platform at this time is Raspberry Pi and the target device is the Pi Zero.  Currently an initial prototype is being constructed on a Raspberry Pi 3 and provides sensors for temperature and counting people moving past the node.  More information on the hardware can be found below.
 
@@ -54,7 +54,7 @@ GO Bot Sense is configured through the "config.json" file found in the software 
 
 # Starting GO Bot Sense
 
-For the moment, just type "python3 node.py" to start the GO Bot Sense node.
+For the moment, just type "python3 node.py" to start the GO Bot Sense node.  Startup scripts will be provided later.
 
 # Hardware Configuration
 
