@@ -43,6 +43,7 @@ These instructions assume you are starting from a fresh Raspberry Pi.
 	* sudo python3 -m pip install adafruit-ads1x15
 10. Install python dependencies
     * sudo python3 -m pip install schedule
+	* sudo python3 -m pip install bottle
 11. Go to your home directory.
     * cd ~
 12. Clone the GitHub repository.

@@ -4,8 +4,12 @@ import time
 import sync
 import content
 import content_manager
+import sync_data
 import node
 import config
+import threading
+import sync_services
+import sync_channel
 
 node_id = config.node.id
 print('Node Id: {0}', node_id)
@@ -72,3 +76,60 @@ pkg.to_file('testpkg.json')
 pkgin = sync.SyncPackage.from_file('testpkg.json')
 print(str(pkgin))
 print('...done')
+
+print("Inserting package")
+sync_data.insert_package(pkg, sync.SyncPackageStatus.ACTIVE)
+print('...done')
+
+print("Selecting active packages")
+packages = sync_data.select_packages_by_status(sync.SyncPackageStatus.ACTIVE)
+print('...done')
+
+print("Updating package")
+sync_data.update_package_status(pkg.id, sync.SyncPackageStatus.COMPLETED)
+print('...done')
+
+print("Deleting package")
+sync_data.delete_package(pkg.id)
+print('...done')
+
+print("Inserting ack")
+sync_data.insert_ack(pkg.id, True, pkg.source, pkg.source)
+print('...done')
+
+print("Selecting ack chunk")
+start_date = int(time.time())
+end_date = start_date + 60
+start_date = start_date - (15 * 60)
+acks = sync_data.select_ack_chunk(pkg.source, start_date, end_date)
+print('...done')
+
+print("Deleting ack")
+sync_data.delete_ack(pkg.id, pkg.source)
+print('...done')
+
+pkg_id = sync.get_package_id(pkg.source, pkg.start_time, pkg.end_time)
+print("Generated package ID => {0}".format(pkg_id))
+
+pkg_filename = sync.get_package_filename(pkg_id)
+print("Generated package filename => {0}".format(pkg_filename))
+
+
+sync.SyncNetwork.init()
+sync_channel.SyncChannels.init()
+
+# start up the sync services
+threading.Thread(target=sync_services.main).start()
+
+# sleep a little to give the server time to start
+time.sleep(10)
+
+channel = sync_channel.SyncChannels.channel('shared')
+channel.request_info(config.node.id, config.node.id)
+
+time.sleep(2)
+info = sync.SyncNetwork.get_info(config.node.id)
+print("Info: "+str(info))
+
+channel.request_offer(config.node.id, config.node.id)
+

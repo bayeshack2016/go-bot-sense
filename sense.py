@@ -25,7 +25,6 @@ def init():
 	_senses = {}
 	for conf in config.senses.values():
 		sense_class = class_from_string(conf.impl_name)
-		print("Sense config class -> "+str(sense_class))
 		sense = sense_class()
 		sense.init(conf.impl_config)
 		_senses[conf.name] = sense

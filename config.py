@@ -89,27 +89,61 @@ class SenseConfig:
 		return ret
 		
 class SyncConfig:
-	SHARED = 0x00
-	AD_HOC = 0x01
-	SNEAKER = 0x02
-	
-	def __init__(self, start_min=0, period_min=10, sync_channel=SHARED, sync_channel_config=None):
+	def __init__(self, start_min=0, period_min=10, data_dir=None, channels=None, network=None, services_ip=None, services_port=None):
 		self.start_min = start_min
 		self.period_min = period_min
-		self.sync_channel = sync_channel
-		self.sync_channel_config = sync_channel_config
+		self.data_dir = data_dir
+		self.channels = channels
+		self.network = network
+		self.services_ip = services_ip
+		self.services_port = services_port
 	
 	def __str__(self):
-		return self.to_string()
+		return json.dumps( vars(self), default=lambda o: o.__dict__ )		
+	
+	@staticmethod
+	def from_dict(dict):
+		if dict is None:
+			return None
+		channels = []
+		for channel_dict in dict['channels']:
+			channels.append(SyncChannelConfig.from_dict(channel_dict))
+		network = []
+		for net_dict in dict['network']:
+			network.append(SyncNetConfig.from_dict(net_dict))
+		
+		return SyncConfig(start_min=dict['start_min'], period_min=dict['period_min'], data_dir=dict['data_dir'], channels=channels, network=network, services_ip=dict['services_ip'], services_port=dict['services_port'])
 
-	def to_string(self):
+class SyncChannelConfig:
+	def __init__(self, name=None, channel_class=None, config=None):
+		self.name = name
+		self.channel_class = channel_class
+		self.config = config
+	
+	def __str__(self):
 		return json.dumps( vars(self), default=lambda o: o.__dict__ )
 	
 	@staticmethod
 	def from_dict(dict):
 		if dict is None:
 			return None
-		return SyncConfig(start_min=dict['start_min'], period_min=dict['period_min'], sync_channel=dict['sync_channel'], sync_channel_config=dict['sync_channel_config'])
+		return SyncChannelConfig(name=dict['name'], channel_class=dict['channel_class'], config=dict['config'])
+	
+class SyncNetConfig:
+
+	def __init__(self, id=None, channel=None, address=None):
+		self.id = id
+		self.channel = channel
+		self.address = address
+	
+	def __str__(self):
+		return json.dumps( vars(self), default=lambda o: o.__dict__ )
+	
+	@staticmethod
+	def from_dict(dict):
+		if dict is None:
+			return None
+		return SyncNetConfig(id=dict['id'], channel=dict['channel'], address=dict['address'])
 
 init()
 

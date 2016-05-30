@@ -6,8 +6,10 @@ import threading
 DB_FILENAME = "content_data.sqlite"
 CONTENT_METADATA_CREATE = "create table if not exists ContentMetadata (Id TEXT PRIMARY KEY, Description TEXT, ContentType TEXT, ContentSize INTEGER, CreateDate INTEGER, PublishDate INTEGER, ExpireDate INTEGER, Author TEXT, AltText TEXT, TargetNodes TEXT, TargetGroups TEXT)"
 CONTENT_DATA_CREATE = "create table if not exists ContentData (Id TEXT PRIMARY KEY, Content BLOB)"
+CONTENT_HISTORY_CREATE = "create table if not exists ContentHistory (Timestamp INTEGER, Command TEXT, Id TEXT, OldId TEXT, Description TEXT, ContentType TEXT, ContentSize INTEGER, CreateDate INTEGER, PublishDate INTEGER, ExpireDate INTEGER, Author TEXT, AltText TEXT, TargetNodes TEXT, TargetGroups TEXT)"
 CONTENT_METADATA_INSERT = "insert into ContentMetadata values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 CONTENT_DATA_INSERT = "insert into ContentData values (?, ?)"
+CONTENT_HISTORY_INSERT = "insert into ContentHistory values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 CONTENT_METADATA_LIST_ALL = "select * from ContentMetadata"
 CONTENT_METADATA_SELECT_BY_ID = "select * from ContentMetadata where Id = ?"
 CONTENT_DATA_SELECT_BY_ID = "select Content from ContentData where Id = ?"
@@ -24,6 +26,7 @@ def init_database():
 		cursor = db.cursor()
 		cursor.execute(CONTENT_METADATA_CREATE)
 		cursor.execute(CONTENT_DATA_CREATE)
+		cursor.execute(CONTENT_HISTORY_CREATE)
 		db.commit()
 	except Exception as e:
 		db.rollback()
@@ -33,12 +36,14 @@ def init_database():
 		_lock.release()
 		
 def insert_content(metadata, data):
+	timestamp=int(time.time())
 	try:
 		_lock.acquire()
 		db = sqlite3.connect(DB_FILENAME)
 		cursor = db.cursor()
 		cursor.execute(CONTENT_METADATA_INSERT, (metadata.id, metadata.description, metadata.content_type, metadata.content_size, metadata.create_date, metadata.publish_date, metadata.expire_date, metadata.author, metadata.alt_text, metadata.target_nodes, metadata.target_groups))
 		cursor.execute(CONTENT_DATA_INSERT, (metadata.id, data))
+		cursor.execute(CONTENT_HISTORY_INSERT, (timestamp, content.ContentCommand.ADD, metadata.id, metadata.id, metadata.description, metadata.content_type, metadata.content_size, metadata.create_date, metadata.publish_date, metadata.expire_date, metadata.author, metadata.alt_text, metadata.target_nodes, metadata.target_groups))
 		db.commit()
 	except Exception as e:
 		db.rollback()
@@ -104,12 +109,14 @@ def select_content(id):
 	return ret
 
 def update_content(old_id, metadata, data):
+	timestamp=int(time.time())
 	try:
 		_lock.acquire()
 		db = sqlite3.connect(DB_FILENAME)
 		cursor = db.cursor()
 		cursor.execute(CONTENT_METADATA_UPDATE, (metadata.id, metadata.description, metadata.content_type, metadata.content_size, metadata.create_date, metadata.publish_date, metadata.expire_date, metadata.author, metadata.alt_text, metadata.target_nodes, metadata.target_groups, old_id))
 		cursor.execute(CONTENT_DATA_UPDATE, (metadata.id, data, old_id))
+		cursor.execute(CONTENT_HISTORY_INSERT, (timestamp, content.ContentCommand.UPDATE, metadata.id, old_id, metadata.description, metadata.content_type, metadata.content_size, metadata.create_date, metadata.publish_date, metadata.expire_date, metadata.author, metadata.alt_text, metadata.target_nodes, metadata.target_groups))
 		db.commit()
 	except Exception as e:
 		db.rollback()
@@ -119,12 +126,14 @@ def update_content(old_id, metadata, data):
 		_lock.release()
 
 def delete_content(id):
+	timestamp=int(time.time())
 	try:
 		_lock.acquire()
 		db = sqlite3.connect(DB_FILENAME)
 		cursor = db.cursor()
 		cursor.execute(CONTENT_DATA_DELETE, (id,))
 		cursor.execute(CONTENT_METADATA_DELETE, (id,))
+		cursor.execute(CONTENT_HISTORY_INSERT, (timestamp, content.ContentCommand.DELETE, id, id, None, None, None, None, None, None, None, None, None, None))
 		db.commit()
 	except Exception as e:
 		db.rollback()
